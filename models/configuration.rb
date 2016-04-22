@@ -4,6 +4,9 @@ require 'sequel'
 
 # Holds a full configuration file's information
 class Configuration < Sequel::Model
+	many_to_one :projects
+	set_allowed_columns :filename, :relative_path, :description, :base64_document
+
 	def to_json(options = {})
 		JSON({ type: 'configuration',
 			         id: id,
