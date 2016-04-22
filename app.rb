@@ -66,13 +66,14 @@ class ShareConfigurationsAPI < Sinatra::Base
 		begin
 			doc_url = URI.join(@request_url.to_s + '/', 'document')
 			configuration = Configuration.where(project_id: params[:project_id], id: params[:id]).first
+			halt(404, 'Configuration not found') unless configuration
 			JSON.pretty_generate( data: {
 				                                    configuration: configuration,
 				                                    links: { document: doc_url }
 				})
 		rescue => e 
-			status 404
-			logger.info "FAILED to GET configuration: #{e.inspect}"
+			status 400
+			logger.info "FAILED to process GET configuration request: #{e.inspect}"
 			e.inspect
 		end
 	end
