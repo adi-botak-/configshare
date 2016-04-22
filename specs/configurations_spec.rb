@@ -49,7 +49,9 @@ describe 'Testing Configuration resource routes' do
 		end
 
 		it 'SAD: should not find non-existent configuration' do
-			get "/api/v1/projects/#{rand(1..10)}/configurations/#{rand(1..10)}"
+			proj_id = invalid_id(Project)
+			config_id = invalid_id(Configuration)
+			get "/api/v1/projects/#{proj_id}/configurations/#{config_id}"
 			_(last_response.status).must_equal 404
 		end
 	end
