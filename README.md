@@ -31,11 +31,11 @@ Test this API by running:
 	$ RACK_ENV=test rake db:migrate
 	$ bundle exec rake spec
 
-## Execute
+## Develop
 
-Run this API during deployment:
+Run this API during development:
 
-	$ rake db:migrate (If switching from test environment)
+	$ rake db:migrate
 	$ bundle exec rackup
 
 or use autoloading during development
