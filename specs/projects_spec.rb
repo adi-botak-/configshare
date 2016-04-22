@@ -46,4 +46,13 @@ describe 'Project resource calls' do
 			_(last_response.status).must_equal 404
 		end
 	end
+
+	describe 'Getting an index of existing projects' do
+		it 'HAPPY: should find list of existing projects' do
+			(1..5).each { |i| Project.create(name: "Project #{i}") }
+			result = get '/api/v1/projects'
+			projs = JSON.parse(result.body)
+			_(projs['data'].count).must_equal 5
+		end
+	end
 end
