@@ -9,7 +9,8 @@ Sequel.migration do
 			String :filename, null: false
 			String :relative_path, null: false, default: './'
 			String :description
-			String :base64_document, null: false, default: ''
+			String :document_encrypted, text: true
+			String :nonce
 
 			unique [:project_id, :filename]
 		end

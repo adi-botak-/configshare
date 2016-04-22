@@ -25,3 +25,10 @@ desc 'Run all the tests'
 Rake::TestTask.new(name=:spec) do |t|
 	t.pattern = 'specs/*_spec.rb'
 end
+
+desc 'Create rbnacl key'
+task :key_generate do
+	require 'rbnacl/libsodium'
+	key = RbNaCl::Random.random_bytes(RbNaCl::SecretBox.key_bytes)
+	puts "KEY: #{Base64.strict_encode64 key}"
+end
