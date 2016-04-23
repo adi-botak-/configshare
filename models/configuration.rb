@@ -11,7 +11,8 @@ class Configuration < Sequel::Model
 	set_allowed_columns :filename, :relative_path, :description
 
 	def document=(document_plaintext)
-		self.document_encrypted = encrypt(document_plaintext)
+		@document = document_plaintext
+		self.document_encrypted = encrypt(@document)
 	end
 
 	def document
