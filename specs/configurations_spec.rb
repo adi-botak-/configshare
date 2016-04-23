@@ -20,10 +20,10 @@ describe 'Testing Configuration resource routes' do
 		it 'HAPPY: should encrypt relevant data' do
 			original_doc = "---\ntest: 'testing'\ndata: [1, 2, 3]"
 
-			proj = Configuration.new(filename: 'Secret Project')
-			proj.document = original_doc
-			proj.save
-			id = proj.id
+			config = Configuration.new(filename: 'Secret Project')
+			config.document = original_doc
+			config.save
+			id = config.id
 
 			_(Configuration[id].document).must_equal original_doc
 			_(Configuration[id].document_encrypted).wont_equal original_doc
