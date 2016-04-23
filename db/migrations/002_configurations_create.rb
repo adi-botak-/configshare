@@ -3,7 +3,7 @@ require 'sequel'
 Sequel.migration do 
 	change do
 		create_table(:configurations) do
-			String :id, type: :uuid, primary_key: true
+			String :id, type: :uuid, primary_key: true 
 			foreign_key :project_id
 
 			String :filename, null: false

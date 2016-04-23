@@ -23,7 +23,7 @@ describe 'Testing Configuration resource routes' do
 			config = Configuration.new(filename: 'Secret Project')
 			config.document = original_doc
 			config.save
-			id = config.id
+			id = config.id 
 
 			_(Configuration[id].document).must_equal original_doc
 			_(Configuration[id].document_encrypted).wont_equal original_doc
