@@ -5,7 +5,9 @@ API to store and retrieve configuration files
 ## Routes
 
 `api/v1/configurations`: returns a json of all configuration IDs
+
 `api/v1/configurations/[ID].json`: returns a json of all information about a configuration with given ID
+
 `api/v1/configurations/[ID]/document`: returns a text/plain document with a configuration document for given ID
 
 ## Install
