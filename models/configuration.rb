@@ -12,7 +12,7 @@ class Configuration < Sequel::Model
 
 	def document=(document_plaintext)
 		@document = document_plaintext
-		self.document_encrypted = encrypt(@document)
+		self.document_encrypted = encrypt(@document, 'document')
 	end
 
 	def document
