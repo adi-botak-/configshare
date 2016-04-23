@@ -7,6 +7,7 @@ class Project < Sequel::Model
 
 	set_allowed_columns :name
 	one_to_many :configurations
+	many_to_one :owner, class: :Account
 	plugin :association_dependencies, :configurations => :delete
 
 	def repo_url
