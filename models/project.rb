@@ -3,6 +3,8 @@ require 'sequel'
 
 # Holds a Project's information
 class Project < Sequel::Model
+	set_allowed_columns :name, :repo_url
+	
 	one_to_many :configurations
 	plugin :association_dependencies, :configurations => :delete
 
