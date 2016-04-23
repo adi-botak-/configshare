@@ -5,7 +5,8 @@ Sequel.migration do
 		create_table(:projects) do
 			primary_key :id
 			String :name, unique: true, null: false
-			String :repo_url, unique: true
+			String :repo_url_encrypted, unique: true
+			String :nonce_64
 		end
 	end
 end
