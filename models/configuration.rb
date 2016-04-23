@@ -8,15 +8,30 @@ class Configuration < Sequel::Model
 	plugin :uuid, field: :id 
 
 	many_to_one :projects
-	set_allowed_columns :filename, :relative_path, :description
+	set_allowed_columns :filename, :relative_path
+
+	def encrypt_all
+		crypts = encrypted_fields(document: @document, description: @description)
+		self.document_encrypted = crypts[:document] if @document
+		self.description_encrypted = crypts[:description] if @description
+	end
 
 	def document=(document_plaintext)
 		@document = document_plaintext
-		self.document_encrypted = encrypt(@document, 'document')
+		encrypt_all
 	end
 
 	def document
-		@document ||= decrypt(document_encrypted)
+		@document ||= decrypt_field(document_encrypted, :document)
+	end
+
+	def description=(description_plaintext)
+		@description = description_plaintext
+		encrypt_all
+	end
+
+	def description
+		@description ||= decrypt_field(description_encrypted, :description)
 	end
 
 	def to_json(options = {})
