@@ -26,10 +26,12 @@ Rake::TestTask.new(name=:spec) do |t|
 	t.pattern = 'specs/*_spec.rb'
 end
 
-desc 'Create rbnacl key'
-task :key_generate do
+namespace :key do
 	require 'rbnacl/libsodium'
 	require 'base64'
-	key = RbNaCl::Random.random_bytes(RbNaCl::SecretBox.key_bytes)
-	puts "KEY: #{Base64.strict_encode64 key}"
+	desc 'Create rbnacl key'
+	task :generate do
+		key = RbNaCl::Random.random_bytes(RbNaCl::SecretBox.key_bytes)
+		puts "KEY: #{Base64.strict_encode64 key}"
+	end
 end
