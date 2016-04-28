@@ -11,6 +11,11 @@ class Project < Sequel::Model
 	many_to_many :contributors, class: Account, join_table: :accounts_projects, left_key: :project_id, right_key: :contributor_id
 	plugin :association_dependencies, configurations: :delete
 
+	def before_destroy
+		DB[:accounts_projects].where(project_id: id).delete
+		super
+	end
+
 	def repo_url
 		@repo_url ||= decrypt_field(repo_url_encrypted, :repo_url)
 	end
