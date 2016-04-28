@@ -3,6 +3,7 @@ require 'rbnacl/libsodium'
 require 'base64'
 require 'json'
 
+# Holds and persists an account's information
 class Account < Sequel::Model
 	include EncryptableModel
 
@@ -26,12 +27,5 @@ class Account < Sequel::Model
 			         username: username
 			},
 			options)
-	end
-
-	def self.hash_password(salt, pwd)
-		opslimit = 2**20
-		memlimit = 2**24
-		digest_size = 64
-		RbNaCl::PasswordHash.scrypt(pwd, salt, opslimit, memlimit, digest_size)
 	end
 end
