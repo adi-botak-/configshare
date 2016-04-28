@@ -1,10 +1,13 @@
 class ShareConfigurationsAPI < Sinatra::Base
 	post '/api/v1/accounts/?' do 
 		begin
-			new_data = JSON.parse(request.body.read)
-			new_account = Account.create(new_data)
+			data = JSON.parse(request.body.read)
+			new_account = Account.new(username: data['username'], email: data['email'])
+			new_account.password = data['password']
+			new_account.save
 		rescue => e 
 			logger.info "FAILED to create new account: #{e.inspect}"
+			puts "FAILED to create new account: #{e.inspect}"
 			halt 400
 		end
 
