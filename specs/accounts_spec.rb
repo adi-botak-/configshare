@@ -105,10 +105,22 @@ describe 'Testing Account resource route' do
 			proj = @account.add_owned_project(name: 'Secret Project')
 			proj.repo_url = original_url
 			proj.save
-			id = proj.id
+			
+			original_desc = 'Secret file with database key'
+			original_doc = 'key: 123456789'
+			conf = proj.add_configuration(filename: 'test_file.txt')
+			conf.description = original_desc
+			conf.document = original_doc
+			conf.save
 
-			_(Project[id].repo_url).must_equal original_url
-			_(Project[id].repo_url_encrypted).wont_equal original_url
+			_(Project[proj.id].repo_url).must_equal original_url
+			_(Project[proj.id].repo_url_encrypted).wont_equal original_url
+
+			_(Configuration[conf.id].description).must_equal original_desc
+			_(Configuration[conf.id].description_encrypted).wont_equal original_desc
+
+			_(Configuration[conf.id].document).must_equal original_doc
+			_(Configuration[conf.id].document_encrypted).wont_equal original_doc
 		end
 	end
 

@@ -17,12 +17,11 @@ class Project < Sequel::Model
 	end
 
 	def repo_url
-		@repo_url ||= decrypt_field(repo_url_encrypted, :repo_url)
+		decrypt(repo_url_encrypted)
 	end
 
 	def repo_url=(repo_url_plaintext)
-		@repo_url = repo_url_plaintext
-		self.repo_url_encrypted = encrypt_field(@repo_url, :repo_url)
+		self.repo_url_encrypted = encrypt(repo_url_plaintext) if repo_url_plaintext
 	end
 
 	def to_json(options = {})

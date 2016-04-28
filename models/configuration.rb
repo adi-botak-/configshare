@@ -10,28 +10,20 @@ class Configuration < Sequel::Model
 	many_to_one :projects
 	set_allowed_columns :filename, :relative_path
 
-	def encrypt_all
-		crypts = encrypted_fields(document: @document, description: @description)
-		self.document_encrypted = crypts[:document] if @document
-		self.description_encrypted = crypts[:description] if @description
-	end
-
-	def document=(document_plaintext)
-		@document = document_plaintext
-		encrypt_all
+	def document=(doc_plaintext)
+		self.document_encrypted = encrypt(doc_plaintext) if doc_plaintext
 	end
 
 	def document
-		@document ||= decrypt_field(document_encrypted, :document)
+		decrypt(document_encrypted)
 	end
 
-	def description=(description_plaintext)
-		@description = description_plaintext
-		encrypt_all
+	def description=(desc_plaintext)
+		self.description_encrypted = encrypt(desc_plaintext) if desc_plaintext
 	end
 
 	def description
-		@description ||= decrypt_field(description_encrypted, :description)
+		decrypt(description_encrypted)
 	end
 
 	def to_json(options = {})
