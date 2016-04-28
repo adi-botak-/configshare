@@ -2,7 +2,9 @@ ENV['RACK_ENV'] = 'test'
 
 require 'minitest/autorun'
 require 'rack/test'
-require_relative '../app'
+Dir.glob('./{config,models,controllers}/init.rb').each do |file|
+	require file
+end
 
 include Rack::Test::Methods
 

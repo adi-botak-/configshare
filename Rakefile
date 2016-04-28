@@ -1,5 +1,5 @@
 require 'rake/testtask'
-require './app'
+# require './app'
 
 task :default => [:spec]
 
