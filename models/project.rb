@@ -8,7 +8,8 @@ class Project < Sequel::Model
 	set_allowed_columns :name
 	one_to_many :configurations
 	many_to_one :owner, class: :Account
-	plugin :association_dependencies, :configurations => :delete
+	many_to_many :contributors, class: Account, join_table: :accounts_projects, left_key: :project_id, right_key: :contributor_id
+	plugin :association_dependencies, configurations: :delete
 
 	def repo_url
 		@repo_url ||= decrypt_field(repo_url_encrypted, :repo_url)
