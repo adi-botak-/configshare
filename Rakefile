@@ -1,6 +1,6 @@
 require 'rake/testtask'
 # require './app'
-Dir.glob('./{config,models,controllers}/init.rb').each do |file|
+Dir.glob('./{config,models,,services,controllers}/init.rb').each do |file|
 	require file
 end
 
