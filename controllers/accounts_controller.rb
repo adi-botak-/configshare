@@ -1,4 +1,18 @@
 class ShareConfigurationsAPI < Sinatra::Base
+	get '/api/v1/accounts/:username' do
+		content_type 'application/json'
+
+		username = params[:username]
+		account = Account.where(username: username).first
+
+		if account
+			projects = account.owned_projects
+			JSON.pretty_generate(data: account, relationships: projects)
+		else
+			halt 404, "USER NOT FOUND: #{username}"
+		end
+	end
+
 	post '/api/v1/accounts/?' do 
 		begin
 			data = JSON.parse(request.body.read)
