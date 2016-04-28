@@ -6,6 +6,7 @@ require 'json'
 class Account < Sequel::Model
 	include EncryptableModel
 
+	plugin :timestamps, update_on_create: true
 	set_allowed_columns :username, :email
 	many_to_many :projects, join_table: :accounts_projects
 	one_to_many :owned_projects, class: :Project, key: :owner_id

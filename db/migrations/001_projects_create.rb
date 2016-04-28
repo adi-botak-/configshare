@@ -8,6 +8,8 @@ Sequel.migration do
 
 			String :name, unique: true, null: false
 			String :repo_url_encrypted, unique: true
+			DateTime :created_at
+			DateTime :updated_at
 		end
 	end
 end

@@ -5,6 +5,7 @@ require 'sequel'
 class Project < Sequel::Model
 	include EncryptableModel
 
+	plugin :timestamps, update_on_create: true
 	set_allowed_columns :name
 	one_to_many :configurations
 	many_to_one :owner, class: :Account

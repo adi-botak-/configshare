@@ -9,6 +9,8 @@ Sequel.migration do
 			String :password_hash, text: true, null: false
 			String :email, null: false
 			String :salt, null: false
+			DateTime :created_at
+			DateTime :updated_at
 		end
 	end
 end
