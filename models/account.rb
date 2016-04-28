@@ -7,10 +7,10 @@ class Account < Sequel::Model
 	include EncryptableModel
 
 	set_allowed_columns :username, :email
-	one_to_many :projects, key: :owner_id
+	one_to_many :owned_projects, class: :Project, key: :owner_id
 
 	plugin :uuid, field: :id 
-	plugin :association_dependencies, :projects => :delete
+	plugin :association_dependencies, :owned_projects => :delete
 
 	def password=(new_password)
 		nacl = RbNaCl::Random.random_bytes(RbNaCl::PasswordHash::SCrypt::SALTBYTES)
