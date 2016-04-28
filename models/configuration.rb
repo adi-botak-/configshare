@@ -4,7 +4,7 @@ require 'sequel'
 
 # Holds a full configuration file's information
 class Configuration < Sequel::Model
-	include EncryptableModel
+	include SecureModel
 	plugin :uuid, field: :id 
 
 	many_to_one :projects

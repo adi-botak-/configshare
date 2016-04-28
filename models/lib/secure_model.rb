@@ -2,7 +2,7 @@ require 'base64'
 require 'rbnacl/libsodium'
 
 # For mixing into a model
-module EncryptableModel
+module SecureModel
 	def key
 		@key ||= Base64.strict_decode64(ENV['DB_KEY'])
 	end
@@ -23,7 +23,7 @@ module EncryptableModel
 		end
 	end
 
-	def self.hash_password(salt, pwd)
+	def hash_password(salt, pwd)
 		opslimit = 2**20
 		memlimit = 2**24
 		digest_size = 64

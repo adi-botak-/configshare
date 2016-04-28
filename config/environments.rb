@@ -11,12 +11,14 @@ end
 configure :development, :test do
 	require 'config_env'
 	ConfigEnv.path_to_config("#{__dir__}/config_env.rb")
-	require 'hirb'
-	Hirb.enable
 end
 
 configure do
 	enable :logging
+
 	require 'sequel'
 	DB = Sequel.connect(ENV['DATABASE_URL'])
+
+	require 'hirb'
+	Hirb.enable
 end

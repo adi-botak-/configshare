@@ -3,7 +3,7 @@ require 'sequel'
 
 # Holds a Project's information
 class Project < Sequel::Model
-	include EncryptableModel
+	include SecureModel
 
 	plugin :timestamps, update_on_create: true
 	set_allowed_columns :name
