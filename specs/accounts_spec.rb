@@ -2,13 +2,9 @@ require_relative './spec_helper'
 
 describe 'Testing Account resource route' do 
 	before do
-		begin
-			Configuration.dataset.destroy
-			Project.dataset.destroy
-			Account.dataset.destroy
-		rescue => e
-			puts "ERROR IN BEGIN: #{e}"
-		end
+		Configuration.dataset.destroy
+		Project.dataset.destroy
+		Account.dataset.destroy
 	end
 
 	describe 'Creating new account' do

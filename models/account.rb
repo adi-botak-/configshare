@@ -10,7 +10,7 @@ class Account < Sequel::Model
 	many_to_many :projects, join_table: :accounts_projects
 	one_to_many :owned_projects, class: :Project, key: :owner_id
 
-	plugin :association_dependencies, owned_projects: :delete
+	plugin :association_dependencies, owned_projects: :destroy
 	many_to_many :projects, join_table: :accounts_projects, left_key: :contributor_id, right_key: :project_id
 
 	def password=(new_password)

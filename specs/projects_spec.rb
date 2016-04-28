@@ -2,13 +2,9 @@ require_relative './spec_helper'
 
 describe 'Project resource calls' do
 	before do
-		begin
-			Configuration.dataset.destroy
-			Project.dataset.destroy
-			Account.dataset.destroy
-		rescue => e 
-			puts "ERROR IN BEGIN: #{e}"
-		end
+		Configuration.dataset.destroy
+		Project.dataset.destroy
+		Account.dataset.destroy
 	end
 
 	describe 'Finding existing projects' do
