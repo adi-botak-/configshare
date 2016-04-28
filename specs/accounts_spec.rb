@@ -2,9 +2,13 @@ require_relative './spec_helper'
 
 describe 'Testing Account resource route' do 
 	before do
-		Configuration.dataset.delete
-		Project.dataset.delete
-		Account.dataset.delete
+		begin
+			Configuration.dataset.destroy
+			Project.dataset.destroy
+			Account.dataset.destroy
+		rescue => e
+			puts "ERROR IN BEGIN: #{e}"
+		end
 	end
 
 	describe 'Creating new account' do
@@ -47,7 +51,7 @@ describe 'Testing Account resource route' do
 		end
 	end
 
-	describe 'Finding existing accounts' do
+	describe 'Finding an existing account' do
 		it 'HAPPY: should find an existing account' do
 			new_account = CreateNewAccount.call(
 				username: 'test.name',
@@ -109,6 +113,42 @@ describe 'Testing Account resource route' do
 
 			_(Project[id].repo_url).must_equal original_url
 			_(Project[id].repo_url_encrypted).wont_equal original_url
+		end
+	end
+
+	describe 'Get index of all projects for an account' do
+		it 'HAPPY: should find all projects for an account' do
+			my_account = CreateNewAccount.call(
+				username: 'adi-botak-',
+				email: 'adityautamawijaya@gmail.com',
+				password: 'mypassword')
+
+			other_account = CreateNewAccount.call(
+				username: 'lee123',
+				email: 'lee@nthu.edu.tw',
+				password: 'leepassword')
+
+			my_projs = []
+			3.times do |i|
+				my_projs << my_account.add_owned_project(
+					name: "Project #{my_account.id}-#{i}")
+				other_account.add_owned_project(
+					name: "Project #{other_account.id}-#{i}")
+			end
+
+			other_account.owned_projects.each.with_index do |proj, i|
+				my_projs << my_account.add_project(proj) if i < 2
+			end
+
+			result = get "/api/v1/accounts/#{my_account.username}/projects"
+			_(result.status).must_equal 200
+			projs = JSON.parse(result.body)
+
+			valid_ids = my_projs.map(&:id)
+			_(projs['data'].count).must_equal 5
+			projs['data'].each do |proj|
+				_(valid_ids).must_include proj['id']
+			end
 		end
 	end
 end

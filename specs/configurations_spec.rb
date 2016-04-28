@@ -2,8 +2,8 @@ require_relative './spec_helper'
 
 describe 'Testing Configuration resource routes' do 
 	before do
-		Project.dataset.delete
-		Configuration.dataset.delete
+		Project.dataset.destroy
+		Configuration.dataset.destroy
 	end
 
 	describe 'Adding new configurations to projects' do

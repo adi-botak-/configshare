@@ -50,4 +50,22 @@ class ShareConfigurationsAPI < Sinatra::Base
 		status 201
 		headers('Location' => new_location)
 	end
+
+	get '/api/v1/accounts/:username/projects/?' do
+		content_type 'application/json'
+
+		begin
+			username = params[:username]
+			account = Account.where(username: username).first
+
+			my_projects = Project.where(owner_id: account.id).all
+			other_projects = Project.join(:accounts_projects, project_id: :id).where(contributor_id: account.id).all 
+
+			all_projects = my_projects + other_projects
+			JSON.pretty_generate(data: all_projects)
+		rescue => e
+			logger.info "FAILED to get projects for #{username}"
+			halt 404
+		end
+	end
 end

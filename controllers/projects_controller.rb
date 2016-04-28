@@ -1,10 +1,4 @@
 class ShareConfigurationsAPI < Sinatra::Base
-	get '/api/v1/projects/?' do
-		content_type 'application/json'
-
-		JSON.pretty_generate(data: Project.all)
-	end
-
 	get '/api/v1/projects/:id' do
 		content_type 'application/json'
 
