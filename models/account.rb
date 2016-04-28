@@ -9,7 +9,6 @@ class Account < Sequel::Model
 	set_allowed_columns :username, :email
 	one_to_many :owned_projects, class: :Project, key: :owner_id
 
-	plugin :uuid, field: :id 
 	plugin :association_dependencies, :owned_projects => :delete
 
 	def password=(new_password)
@@ -21,7 +20,6 @@ class Account < Sequel::Model
 
 	def to_json(options = {})
 		JSON({ type: 'account',
-			         id: id,
 			         attributes: {
 			         	  username: username
 			         }
