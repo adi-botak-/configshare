@@ -2,26 +2,9 @@ require_relative './spec_helper'
 
 describe 'Project resource calls' do
 	before do
-		Project.dataset.delete
-		Configuration.dataset.delete
-	end
-
-	describe 'Create new projects' do
-		it 'HAPPY: should create a new unique project' do
-			req_header = { 'CONTENT_TYPE' => 'aaplication/json' }
-			req_body = { name: 'Demo Project' }.to_json
-			post '/api/v1/projects/', req_body, req_header
-			_(last_response.status).must_equal 201
-			_(last_response.location).must_match(%r{http://})
-		end
-
-		it 'SAD: should not create projects with duplicate names' do
-			req_header = { 'CONTENT_TYPE' => 'application/json' }
-			req_body = { name: 'Demo Project' }.to_json
-			post '/api/v1/projects/', req_body, req_header
-			post '/api/v1/projects/', req_body, req_header
-			_(last_response.status).must_equal 400
-		end
+		Configuration.dataset.destroy
+		Project.dataset.destroy
+		Account.dataset.destroy
 	end
 
 	describe 'Finding existing projects' do
@@ -44,15 +27,6 @@ describe 'Project resource calls' do
 		it 'SAD: should not find non-existent projects' do
 			get "/api/v1/projects/#{invalid_id(Project)}"
 			_(last_response.status).must_equal 404
-		end
-	end
-
-	describe 'Getting an index of existing projects' do
-		it 'HAPPY: should find list of existing projects' do
-			(1..5).each { |i| Project.create(name: "Project #{i}") }
-			result = get '/api/v1/projects'
-			projs = JSON.parse(result.body)
-			_(projs['data'].count).must_equal 5
 		end
 	end
 end

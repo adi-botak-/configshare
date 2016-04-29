@@ -2,8 +2,8 @@ require_relative './spec_helper'
 
 describe 'Testing Configuration resource routes' do 
 	before do
-		Project.dataset.delete
-		Configuration.dataset.delete
+		Project.dataset.destroy
+		Configuration.dataset.destroy
 	end
 
 	describe 'Adding new configurations to projects' do
@@ -19,14 +19,18 @@ describe 'Testing Configuration resource routes' do
 
 		it 'HAPPY: should encrypt relevant data' do
 			original_doc = "---\ntest: 'testing'\ndata: [1, 2, 3]"
+			original_desc = 'test description text'
 
 			config = Configuration.new(filename: 'Secret Project')
 			config.document = original_doc
+			config.description = original_desc
 			config.save
 			id = config.id 
 
 			_(Configuration[id].document).must_equal original_doc
 			_(Configuration[id].document_encrypted).wont_equal original_doc
+			_(Configuration[id].description).must_equal original_desc
+			_(Configuration[id].description_encrypted).wont_equal original_desc
 		end
 
 		it 'SAD: should not add a configuration for non-existent project' do
