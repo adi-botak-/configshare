@@ -5,8 +5,6 @@ require 'json'
 
 # Holds and persists an account's information
 class Account < Sequel::Model
-	include SecureModel
-
 	plugin :timestamps, update_on_create: true
 	set_allowed_columns :username, :email
 	one_to_many :owned_projects, class: :Project, key: :owner_id
@@ -14,17 +12,15 @@ class Account < Sequel::Model
 	plugin :association_dependencies, owned_projects: :destroy
 
 	def password=(new_password)
-		nacl = RbNaCl::Random.random_bytes(RbNaCl::PasswordHash::SCrypt::SALTBYTES)
-		digest = hash_password(nacl, new_password)
-		self.salt = Base64.urlsafe_encode64(nacl)
-		self.password_hash = Base64.urlsafe_encode64(digest)
+		new_salt = SecureDB.new_salt
+		hashed = SecureDB.hash_password(new_salt, new_password)
+		self.salt = new_salt
+		self.password_hash = hashed
 	end
 
 	def password?(try_password)
-		nacl = Base64.urlsafe_decode64(salt)
-		try_digest = hash_password(nacl, try_password)
-		try_password_hash = Base64.urlsafe_encode64(try_digest)
-		try_password_hash == password_hash
+		try_hashed = hash_password(salt, try_password)
+		try_hashed.digest == password_hash
 	end
 
 	def to_json(options = {})
