@@ -73,7 +73,7 @@ describe 'Testing Account resource route' do
 		end
 	end
 
-	describe 'Creating new project for account owner' do
+	describe 'Creating new owned project for account owner' do
 		before do
 			@account = CreateNewAccount.call(
 				username: 'adi-botak-',
@@ -81,10 +81,10 @@ describe 'Testing Account resource route' do
 				password: 'mypassword')
 		end
 
-		it 'HAPPY: should create a new unique project for account' do
+		it 'HAPPY: should create a new owned project for account' do
 			req_header = { 'CONTENT_TYPE' => 'application/json' }
 			req_body = { name: 'Demo Project' }.to_json
-			post "/api/v1/accounts/#{@account.username}/projects/", req_body, req_header
+			post "/api/v1/accounts/#{@account.username}/owned_projects/", req_body, req_header
 			_(last_response.status).must_equal 201
 			_(last_response.location).must_match(%r{http://})
 		end
@@ -93,7 +93,7 @@ describe 'Testing Account resource route' do
 			req_header = { 'CONTENT_TYPE' => 'application/json' }
 			req_body = { name: 'Demo Project' }.to_json
 			2.times do
-				post "/api/v1/accounts/#{@account.username}/projects/", req_body, req_header
+				post "/api/v1/accounts/#{@account.username}/owned_projects/", req_body, req_header
 			end
 			_(last_response.status).must_equal 400
 			_(last_response.location).must_be_nil
@@ -102,9 +102,10 @@ describe 'Testing Account resource route' do
 		it 'HAPPY: should encrypt relevant data' do
 			original_url = 'http://example.org/project/proj.git'
 
-			proj = @account.add_owned_project(name: 'Secret Project')
-			proj.repo_url = original_url
-			proj.save
+			proj = AddProjectForOwner.call(
+				@account,
+				name: 'Secret Project',
+				repo_url: original_url)
 			
 			original_desc = 'Secret file with database key'
 			original_doc = 'key: 123456789'
