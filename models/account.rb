@@ -19,13 +19,14 @@ class Account < Sequel::Model
 	end
 
 	def password?(try_password)
-		try_hashed = hash_password(salt, try_password)
-		try_hashed.digest == password_hash
+		try_hashed = SecureDB.hash_password(salt, try_password)
+		try_hashed == password_hash
 	end
 
 	def to_json(options = {})
 		JSON({ type: 'account',
-			         username: username
+			         username: username,
+			         email: email
 			},
 			options)
 	end

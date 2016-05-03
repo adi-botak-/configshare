@@ -32,11 +32,11 @@ describe 'Project resource calls' do
 
 	describe 'Add a collaborator to a project' do
 		before do
-			@owner = CreateNewAccount.call(
+			@owner = CreateAccount.call(
 				username: 'adi-botak-',
 				email: 'adityautamawijaya@gmail.com',
 				password: 'mypassword')
-			@collaborator = CreateNewAccount.call(
+			@collaborator = CreateAccount.call(
 				username: 'lee123',
 				email: 'lee@nthu.edu.tw',
 				password: 'leepassword')

@@ -16,7 +16,7 @@ class ShareConfigurationsAPI < Sinatra::Base
 	post '/api/v1/accounts/?' do 
 		begin
 			data = JSON.parse(request.body.read)
-			new_account = CreateNewAccount.call(
+			new_account = CreateAccount.call(
 				username: data['username'],
 				email: data['email'],
 				password: data['password'])

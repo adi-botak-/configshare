@@ -5,9 +5,9 @@ require 'sequel'
 # Holds a full configuration file's information
 class Configuration < Sequel::Model
 	plugin :uuid, field: :id 
-
 	many_to_one :projects
 	set_allowed_columns :filename, :relative_path
+	plugin :timestamps, update_on_create: true
 
 	def document=(doc_plain)
 		self.document_encrypted = SecureDB.encrypt(doc_plain) if doc_plain

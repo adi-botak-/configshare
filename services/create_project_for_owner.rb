@@ -1,5 +1,6 @@
-class AddProjectForOwner
-	def self.call(account, name:, repo_url: nil)
+# Create a new project for an owner
+class CreateProjectForOwner
+	def self.call(account:, name:, repo_url: nil)
 		saved_project = account.add_owned_project(name: name)
 		saved_project.repo_url = repo_url if repo_url
 		saved_project.save

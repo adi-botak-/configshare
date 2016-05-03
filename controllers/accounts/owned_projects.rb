@@ -4,8 +4,8 @@ class ShareConfigurationsAPI < Sinatra::Base
 		begin
 			new_project_data = JSON.parse(request.body.read)
 			account = Account.where(username: params[:username]).first
-			saved_project = AddProjectForOwner.call(
-				account,
+			saved_project = CreateProjectForOwner.call(
+				account: account,
 				name: new_project_data['name'],
 				repo_url: new_project_data['repo_url'])
 			new_location = URI.join(@request_url.to_s + '/', saved_project.id.to_s).to_s
