@@ -40,7 +40,11 @@ class ShareConfigurationsAPI < Sinatra::Base
 		begin
 			new_data = JSON.parse(request.body.read)
 			project = Project[params[:project_id]]
-			saved_config = project.add_configuration(new_data)
+			saved_config = CreateConfigurationForProject.call(
+				project: project,
+				filename: new_data['filename'],
+				description: new_data['description'],
+				document: new_data['document'])
 		rescue => e
 			logger.info "FAILED to create new config: #{e.inspect}"
 			halt 400

@@ -4,26 +4,25 @@ require 'sequel'
 
 # Holds a full configuration file's information
 class Configuration < Sequel::Model
-	include SecureModel
 	plugin :uuid, field: :id 
-
 	many_to_one :projects
 	set_allowed_columns :filename, :relative_path
+	plugin :timestamps, update_on_create: true
 
-	def document=(doc_plaintext)
-		self.document_encrypted = encrypt(doc_plaintext) if doc_plaintext
+	def document=(doc_plain)
+		self.document_encrypted = SecureDB.encrypt(doc_plain) if doc_plain
 	end
 
 	def document
-		decrypt(document_encrypted)
+		SecureDB.decrypt(document_encrypted)
 	end
 
-	def description=(desc_plaintext)
-		self.description_encrypted = encrypt(desc_plaintext) if desc_plaintext
+	def description=(desc_plain)
+		self.description_encrypted = SecureDB.encrypt(desc_plain) if desc_plain
 	end
 
 	def description
-		decrypt(description_encrypted)
+		SecureDB.decrypt(description_encrypted)
 	end
 
 	def to_json(options = {})

@@ -1,28 +1,47 @@
+=begin
 acc1 = Account.new(username: 'adi-botak-', email: 'adityautamawijaya@gmail.com')
 acc1.password = 'mypassword'
 acc1.save
+=end
 
-proj1 = acc1.add_owned_project(name: 'Adi Project')
-proj1.repo_url = 'http://github.com/adi-botak-/project.git'
-proj1.save
-doc11 = proj1.add_configuration(filename: 'config_env.rb')
-doc11.document = "this is the first line\nthis is the second line"
-doc11.description = 'environmental configurations for test, development envs'
-doc11.save
-doc12 = proj1.add_configuration(filename: 'environments.ini')
-doc12.document = '---'
-doc12.save
+acc1 = CreateAccount.call(
+	username: 'adi-botak-',
+	email: 'adityautamawijaya@gmail.com',
+	password: 'mypassword')
 
-proj2 = acc1.add_owned_project(name: 'Config Project')
-doc21 = proj2.add_configuration(filename: 'credentials.json')
-doc21.document = 'username: password'
-doc21.save
+acc2 = CreateAccount.call(
+	username: 'lee123',
+	email: 'lee@nthu.edu.tw',
+	password: 'leepassword')
 
-acc2 = Account.new(username: 'lee123', email: 'lee@nthu.edu.tw')
-acc2.password = 'randompassword'
-acc2.save
+proj11 = CreateProjectForOwner.call(
+	account: acc1,
+	name: 'Adi Project',
+	repo_url: 'http://github.com/adi-botak-/project.git')
+
+doc11 = CreateConfigurationForProject.call(
+	project: proj11,
+	filename: 'config_env.rb',
+	document: "this is the first line\nthis is the second line",
+	description: 'environmental configurations for test, development envs')
+
+doc12 = CreateConfigurationForProject.call(
+	project: proj11,
+	filename: 'environments.ini',
+	document: '---')
+
+proj12 = CreateProjectForOwner.call(
+	account: acc1,
+	name: 'Config Project')
+
+doc21 = CreateConfigurationForProject.call(
+	project: proj12,
+	filename: 'credentials.json',
+	document: 'username: password')
 
 proj21 = acc2.add_owned_project(name: 'Lee\'s Project')
-proj22 = acc2.add_owned_project(name: 'Lee\'s Solo Project')
 acc1.add_project(proj21)
-acc2.add_project(proj2)
+proj22 = acc2.add_owned_project(name: 'Lee\'s Solo Project')
+
+puts 'Database seeded!'
+DB.tables.each { |table| puts "#{table} --> #{DB[table].count}"}

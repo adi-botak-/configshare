@@ -3,8 +3,6 @@ require 'sequel'
 
 # Holds a Project's information
 class Project < Sequel::Model
-	include SecureModel
-
 	plugin :timestamps, update_on_create: true
 	set_allowed_columns :name
 	one_to_many :configurations
@@ -18,11 +16,11 @@ class Project < Sequel::Model
 	end
 
 	def repo_url
-		decrypt(repo_url_encrypted)
+		SecureDB.decrypt(repo_url_encrypted)
 	end
 
-	def repo_url=(repo_url_plaintext)
-		self.repo_url_encrypted = encrypt(repo_url_plaintext) if repo_url_plaintext
+	def repo_url=(repo_url_plain)
+		self.repo_url_encrypted = SecureDB.encrypt(repo_url_plain) if repo_url_plain
 	end
 
 	def to_json(options = {})

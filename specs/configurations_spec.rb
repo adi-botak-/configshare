@@ -11,7 +11,10 @@ describe 'Testing Configuration resource routes' do
 			existing_project = Project.create(name: 'Demo Project')
 
 			req_header = { 'CONTENT_TYPE' => 'application/json' }
-			req_body = { filename: 'Demo Configuration' }.to_json
+			req_body = {
+				filename: 'Demo Configuration',
+				description: 'config file with variables',
+				document: "config1 = 'asdf'\nconfig2=asdfjkl" }.to_json
 			post "/api/v1/projects/#{existing_project.id}/configurations", req_body, req_header
 			_(last_response.status).must_equal 201
 			_(last_response.location).must_match(%r{http://})

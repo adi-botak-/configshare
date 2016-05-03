@@ -29,4 +29,31 @@ describe 'Project resource calls' do
 			_(last_response.status).must_equal 404
 		end
 	end
+
+	describe 'Add a collaborator to a project' do
+		before do
+			@owner = CreateAccount.call(
+				username: 'adi-botak-',
+				email: 'adityautamawijaya@gmail.com',
+				password: 'mypassword')
+			@collaborator = CreateAccount.call(
+				username: 'lee123',
+				email: 'lee@nthu.edu.tw',
+				password: 'leepassword')
+			@project = @owner.add_owned_project(
+				name: 'Collaborator needed')
+		end
+
+		it 'HAPPY: should add a collaborative project' do
+			result = post "/api/v1/projects/#{@project.id}/collaborator/#{@collaborator.username}"
+			_(result.status).must_equal 201
+			_(@collaborator.projects.map(&:id)).must_include @project.id
+		end
+
+		it 'SAD: should not be able to add project owner as collaborator' do
+			result = post "/api/v1/projects/#{@project.id}/collaborator/#{@owner.username}"
+			_(result.status).must_equal 403
+			_(@owner.projects.map(&:id)).wont_include @project.id
+		end
+	end
 end

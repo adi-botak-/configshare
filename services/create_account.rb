@@ -1,5 +1,5 @@
 # Service object to create new accounts using all columns
-class CreateNewAccount
+class CreateAccount
 	def self.call(username:, email:, password:)
 		account = Account.new(username: username)
 		account.email = email
