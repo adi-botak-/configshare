@@ -8,7 +8,7 @@ class ShareConfigurationsAPI < Sinatra::Base
 	end
 
 	get '/?' do
-		'configshare web service is up and running at /api/v1'
+		'api-configshare web service is up and running at /api/v1'
 	end
 
 	get '/api/v1/?' do
