@@ -1,8 +1,10 @@
 # Add a collaborator to another owner's existing project
 class AddCollaboratorForProject
-	def self.call(account:, project:)
-		if project.owner.id != account.id
-			account.add_project(project)
+	def self.call(collaborator_id:, project_id:)
+		collaborator = Account.where(id: collaborator_id.to_i).first
+		project = Project.where(id: project_id.to_i).first
+		if project.owner.id != collaborator.id
+			collaborator.add_project(project)
 			true
 		else
 			false

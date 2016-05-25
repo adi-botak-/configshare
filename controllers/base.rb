@@ -15,9 +15,9 @@ class ShareConfigurationsAPI < Sinatra::Base
 		(scheme =~ /^Bearer$/i) ? account_payload : nil
 	end
 
-	def authorized_account?(env, username)
+	def authorized_account?(env, id)
 		account = authenticated_account(env)
-		account['username'] == username
+		account['id'] == id.to_i
 	rescue
 		false
 	end

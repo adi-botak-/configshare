@@ -1,11 +1,10 @@
 # Sinatra Application Controllers
 class ShareConfigurationsAPI < Sinatra::Base
-	post '/api/v1/accounts/:username/owned_projects/?' do 
+	post '/api/v1/accounts/:id/owned_projects/?' do 
 		begin
 			new_project_data = JSON.parse(request.body.read)
-			account = Account.where(username: params[:username]).first
 			saved_project = CreateProjectForOwner.call(
-				account: account,
+				owner_id: params[:id],
 				name: new_project_data['name'],
 				repo_url: new_project_data['repo_url'])
 			new_location = URI.join(@request_url.to_s + '/', saved_project.id.to_s).to_s
@@ -18,15 +17,14 @@ class ShareConfigurationsAPI < Sinatra::Base
 		headers('Location' => new_location)
 	end
 
-	get '/api/v1/accounts/:username/owned_projects/?' do
+	get '/api/v1/accounts/:owner_id/owned_projects/?' do
 		content_type 'application/json'
 
 		begin
-			account = Account.where(username: params[:username]).first
-			owned_projects = account.owned_projects
-			JSON.pretty_generate(data: owned_projects)
+			owner = Account[params[:owner_id]]
+			JSON.pretty_generate(data: owner.owned_projects)
 		rescue => e
-			logger.info "FAILED to findprojects for user #{params[:username]}: #{e}"
+			logger.info "FAILED to findprojects for user #{params[:owner_id]}: #{e}"
 			halt 404
 		end
 	end
