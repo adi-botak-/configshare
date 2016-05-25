@@ -1,18 +1,16 @@
 class ShareConfigurationsAPI < Sinatra::Base
-	get '/api/v1/accounts/:username/authenticate' do
+	post '/api/v1/accounts/authenticate' do
 		content_type 'application/json'
 
-		username = params[:username]
-		password = params[:password]
-
-		account = FindAndAuthenticateAccount.call(
-			username: username,
-			password: password)
+		credentials = JSON.parse(request.body.read)
+		account, auth_token = AuthenticateAccount.call(
+			username: credentials['username'],
+			password: credentials['password'])
 
 		if account
-			account.to_json
+			{ account: account, auth_token: auth_token }.to_json
 		else
-			halt 401, "Account #{username} could not be authenticated"
+			halt 401, 'Account could not be authenticated'
 		end
 	end
 end

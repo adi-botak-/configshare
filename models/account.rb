@@ -25,6 +25,7 @@ class Account < Sequel::Model
 
 	def to_json(options = {})
 		JSON({ type: 'account',
+					   id: id,
 			         username: username,
 			         email: email
 			},
