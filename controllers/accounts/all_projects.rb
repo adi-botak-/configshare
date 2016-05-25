@@ -4,11 +4,11 @@ class ShareConfigurationsAPI < Sinatra::Base
 		content_type 'application/json'
 
 		begin
-			account = Account.where(username: params[:username]).first
-			all_projects = FindAllAccountProjects.call(account)
+			halt 401 unless authorized_account?(env, params[:username])
+			all_projects = FindAllAccountProjects.call(username: params[:username])
 			JSON.pretty_generate(data: all_projects)
 		rescue => e 
-			logger.info "FAILED to find projects for user #{params[:username]}: #{e}"
+			logger.info "FAILED to find projects for user: #{e}"
 			halt 404
 		end
 	end

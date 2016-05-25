@@ -1,9 +1,13 @@
 # Find account and check password
-class FindAndAuthenticateAccount
+class AuthenticateAccount
 	def self.call(username:, password:)
 		return nil unless username && password
 
 		account = Account.where(username: username).first
-		account && account.password?(password) ? account : false
+		if account && account.password?(password)
+		  [account, JWE.encrypt(account)]
+		else
+		  false
+		end
 	end
 end

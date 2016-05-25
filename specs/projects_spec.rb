@@ -7,14 +7,84 @@ describe 'Project resource calls' do
 		Account.dataset.destroy
 	end
 
+	describe 'Get index of all projects for an account' do
+	  before do
+	    @my_account = CreateAccount.call(
+	    	username: 'adi-botak-',
+	    	email: 'adi@nthu.edu.tw',
+	    	password: 'adipassword')
+
+	    @other_account = CreateAccount.call(
+	    	username: 'lee123',
+	    	email: 'lee@nthu.edu.tw',
+	    	password: 'leepassword')
+
+	    @my_projs = []
+	    3.times do |i|
+	    	@my_projs << @my_account.add_owned_project(
+	    		name: "Project #{@my_account.id}-#{i}")
+	    	@other_account.add_owned_project(
+	    		name: "Project #{@other_account.id}-#{i}")
+	    end
+
+	    @other_account.owned_projects.each.with_index do |proj, i|
+	      @my_projs << @my_account.add_project(proj) if i < 2
+	    end
+	  end
+
+	  it 'HAPPY: should find all projects for an account' do
+	    _, auth_token = AuthenticateAccount.call(
+	    	username: 'adi-botak-',
+	    	password: 'adipassword')
+
+	    result = get "/api/v1/accounts/#{@my_account.username}/projects", nil, { "HTTP_AUTHORIZATION" => "Bearer #{auth_token}" }
+	    _(result.status).must_equal 200
+	    projs = JSON.parse(result.body)
+
+	    valid_ids = @my_projs.map(&:id)
+	    _(projs[:data].count).must_equal 5
+	    projs['data'].each do |proj|
+	      _(valid_ids).must_include proj['id']
+	    end
+	  end
+	end
+
 	describe 'Finding existing projects' do
+		before do
+	    @my_account = CreateAccount.call(
+	    	username: 'adi-botak-',
+	    	email: 'adi@nthu.edu.tw',
+	    	password: 'adipassword')
+
+	    @other_account = CreateAccount.call(
+	    	username: 'lee123',
+	    	email: 'lee@nthu.edu.tw',
+	    	password: 'leepassword')
+
+	    @my_projs = []
+	    3.times do |i|
+	    	@my_projs << @my_account.add_owned_project(
+	    		name: "Project #{@my_account.id}-#{i}")
+	    	@other_account.add_owned_project(
+	    		name: "Project #{@other_account.id}-#{i}")
+	    end
+
+	    @other_account.owned_projects.each.with_index do |proj, i|
+	      @my_projs << @my_account.add_project(proj) if i < 2
+	    end
+	  end
+
 		it 'HAPPY: should find an existing project' do
-			new_project = Project.create(name: 'demo project')
+			new_project = @my_projs.first
 			new_configs = (1..3).map do |i|
 				new_project.add_configuration(filename: "config_file#{i}.rb")
 			end
 
 			get "/api/v1/projects/#{new_project.id}"
+			_, auth_token = AuthenticateAccount.call(
+				username: 'adi-botak-',
+				password: 'adipassword')
+			get "api/v1/projects/#{new_project.id}", nil, { "HTTP_AUTHORIZATION" => "Bearer #{auth_token}" }
 			_(last_response.status).must_equal 200
 
 			results = JSON.parse(last_response.body)
@@ -26,7 +96,7 @@ describe 'Project resource calls' do
 
 		it 'SAD: should not find non-existent projects' do
 			get "/api/v1/projects/#{invalid_id(Project)}"
-			_(last_response.status).must_equal 404
+			_(last_response.status).must_equal 401
 		end
 	end
 
