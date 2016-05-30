@@ -4,7 +4,7 @@ Sequel.migration do
 	change do
 		create_table(:projects) do
 			primary_key :id
-			foreign_key :owner_id, :accounts
+			foreign_key :owner_id, :base_accounts
 
 			String :name, unique: true, null: false
 			String :repo_url_encrypted, unique: true

@@ -15,7 +15,7 @@ acc2 = CreateAccount.call(
 	password: 'leepassword')
 
 proj11 = CreateProjectForOwner.call(
-	account: acc1,
+	owner_id: acc1.id,
 	name: 'Adi Project',
 	repo_url: 'http://github.com/adi-botak-/project.git')
 
@@ -31,7 +31,7 @@ doc12 = CreateConfigurationForProject.call(
 	document: '---')
 
 proj12 = CreateProjectForOwner.call(
-	account: acc1,
+	owner_id: acc1.id,
 	name: 'Config Project')
 
 doc21 = CreateConfigurationForProject.call(
