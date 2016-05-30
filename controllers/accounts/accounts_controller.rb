@@ -10,7 +10,7 @@ class ShareConfigurationsAPI < Sinatra::Base
 			projects = account.owned_projects
 			JSON.pretty_generate(data: account, relationships: projects)
 		else
-			halt 404, "USER NOT FOUND: #{id}"
+			halt 404, "ACCOUNT NOT FOUND: #{id}"
 		end
 	end
 
