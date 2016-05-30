@@ -42,7 +42,7 @@ describe 'Project resource calls' do
 	    projs = JSON.parse(result.body)
 
 	    valid_ids = @my_projs.map(&:id)
-	    _(projs[:data].count).must_equal 5
+	    _(projs['data'].count).must_equal 5
 	    projs['data'].each do |proj|
 	      _(valid_ids).must_include proj['id']
 	    end

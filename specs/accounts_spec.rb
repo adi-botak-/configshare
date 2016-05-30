@@ -57,13 +57,13 @@ describe 'Testing Account resource route' do
 				@new_account.add_owned_project(name: "Project #{i}")
 			end
 
-			_, auth_token = AuthenticateAccount.call(
+			_, @auth_token = AuthenticateAccount.call(
 				username: 'test.name',
 				password: 'mypassword')
 		end
 
 		it 'HAPPY: should find an existing account' do
-			get "/api/v1/accounts/#{@new_account.id}", nil, { "HTTP_AUTHORIZATION" => "Bearer #{auth_token}" }
+			get "/api/v1/accounts/#{@new_account.id}", nil, { "HTTP_AUTHORIZATION" => "Bearer #{@auth_token}" }
 			_(last_response.status).must_equal 200
 
 			results = JSON.parse(last_response.body)
@@ -74,7 +74,7 @@ describe 'Testing Account resource route' do
 		end
 
 		it 'SAD: should not return wrong account' do
-			get "/api/v1/accounts/#{random_str(10)}", nil, { "HTTP_AUTHORIZATION" => "Bearer #{auth_token}" }
+			get "/api/v1/accounts/#{random_str(10)}", nil, { "HTTP_AUTHORIZATION" => "Bearer #{@auth_token}" }
 			_(last_response.status).must_equal 401
 		end
 
