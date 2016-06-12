@@ -37,7 +37,7 @@ describe 'Project resource calls' do
 	    	username: 'adi-botak-',
 	    	password: 'adipassword')
 
-	    result = get "/api/v1/accounts/#{@my_account.id}/projects", nil, { "HTTP_AUTHORIZATION" => "Bearer #{auth_token}" }
+	    result = get "/api/v1/accounts/#{@my_account.id}/projects", nil, 'HTTP_AUTHORIZATION' => "Bearer #{auth_token}"
 	    _(result.status).must_equal 200
 	    projs = JSON.parse(result.body)
 
@@ -84,7 +84,7 @@ describe 'Project resource calls' do
 			_, auth_token = AuthenticateAccount.call(
 				username: 'adi-botak-',
 				password: 'adipassword')
-			get "api/v1/projects/#{new_project.id}", nil, { "HTTP_AUTHORIZATION" => "Bearer #{auth_token}" }
+			get "api/v1/projects/#{new_project.id}", nil, 'HTTP_AUTHORIZATION' => "Bearer #{auth_token}"
 			_(last_response.status).must_equal 200
 
 			results = JSON.parse(last_response.body)
@@ -133,24 +133,43 @@ describe 'Project resource calls' do
 				username: 'adi-botak-',
 				email: 'adityautamawijaya@gmail.com',
 				password: 'mypassword')
+
+			_, @auth_token = AuthenticateAccount.call(
+				username: 'adityautamawijaya',
+				password: 'adipassword')
 		end
 
 		it 'HAPPY: should create a new owned project for account' do
-			req_header = { 'CONTENT_TYPE' => 'application/json' }
+			req_header = {
+				'CONTENT_TYPE' => 'application/json',
+				'HTTP_AUTHORIZATION' => "Bearer #{@auth_token}"
+			}
 			req_body = { name: 'Demo Project' }.to_json
 			post "/api/v1/accounts/#{@account.id}/owned_projects/", req_body, req_header
 			_(last_response.status).must_equal 201
-			_(last_response.location).must_match(%r{http://})
+			_(last_response.body).wont_be_empty
 		end
 
 		it 'SAD: should not create projects with duplicate names' do
-			req_header = { 'CONTENT_TYPE' => 'application/json' }
+			req_header = {
+				'CONTENT_TYPE' => 'application/json',
+				'HTTP_AUTHORIZATION' => "Bearer #{@auth_token}"
+			}
 			req_body = { name: 'Demo Project' }.to_json
 			2.times do
 				post "/api/v1/accounts/#{@account.id}/owned_projects/", req_body, req_header
 			end
 			_(last_response.status).must_equal 400
-			_(last_response.location).must_be_nil
+			_(last_response.body).must_be_empty
+		end
+
+		it 'BAD: should not create projects without authorization' do
+		  req_header = { 'CONTENT_TYPE' => 'application.json' }
+		  req_body = { name: 'Demo Project' }.to_json
+		  post "/api/v1/accounts/#{@account.id}/owned_projects/", req_body, req_header
+
+		  _(last_response.status).must_equal 401
+		  _(last_response.location).must_be_nil
 		end
 
 		it 'HAPPY: should encrypt relevant data' do
