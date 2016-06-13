@@ -83,6 +83,7 @@ describe 'Testing project resource routes' do
 			auth_token = authorized_account_token(
 				username: 'adi-botak-',
 				password: 'adipassword')
+			
 			get "api/v1/projects/#{new_project.id}", nil, 'HTTP_AUTHORIZATION' => "Bearer #{auth_token}"
 			_(last_response.status).must_equal 200
 
