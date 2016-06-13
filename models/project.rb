@@ -23,13 +23,31 @@ class Project < Sequel::Model
 		self.repo_url_encrypted = SecureDB.encrypt(repo_url_plain) if repo_url_plain
 	end
 
+	def to_full_json(options = {})
+	  JSON({
+	  	type: 'project',
+	  	id: 'id',
+	  	attributes: {
+	  		name: name,
+	  		repo_url: repo_url
+	  	},
+	  	relationships: {
+	  		owner: owner,
+	  		contributors: contributors,
+	  		configurations: configurations
+	  	}
+	  	},
+	  	options)
+	end
+
 	def to_json(options = {})
 		JSON({ type: 'project',
 			         id: id,
 			         attributes: {
 			         	  name: name,
 			         	  repo_url: repo_url
-			         }
+			         },
+			         relationships: { owner: owner }
 			},
 			options)
 	end

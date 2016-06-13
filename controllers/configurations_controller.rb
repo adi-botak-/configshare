@@ -1,57 +1,40 @@
 class ShareConfigurationsAPI < Sinatra::Base 
-	get '/api/v1/projects/:id/configurations/?' do
-		content_type 'application/json'
-
-		project = Project[params[:id]]
-
-		JSON.pretty_generate(data: project.configurations)
+	def authorized_configuration(env, project_id, config_id)
+	  project = authorized_affiliated_project(env, params[:project_id])
+	  Configuration.first(project_id: project.id, id: params[:config_id])
 	end
 
-	get '/api/v1/projects/:project_id/configurations/:id/?' do
+	get '/api/v1/projects/:project_id/configurations/:config_id/?' do
 		content_type 'application/json'
 
 		begin
-			doc_url = URI.join(@request_url.to_s + '/', 'document')
-			configuration = Configuration.where(project_id: params[:project_id], id: params[:id]).first
-			halt(404, 'Configuration not found') unless configuration
-			JSON.pretty_generate( data: {
-				                                    configuration: configuration,
-				                                    links: { document: doc_url }
-				})
+		  configuration = authorized_configuration(env, params[:project_id], params[:config_id])
+		  raise 'Configuration not found' unless configuration
+		  configuration.to_full_json
 		rescue => e 
-			status 400
-			logger.info "FAILED to process GET configuration request: #{e.inspect}"
-			e.inspect
-		end
-	end
-
-	get '/api/v1/projects/:project_id/configurations/:id/document' do
-		content_type 'text/plain'
-
-		begin
-			Configuration.where(project_id: params[:project_id], id: params[:id]).first.document
-		rescue => e
-			status 404
-			e.inspect
+		  status 401
+		  logger.info "FAILED to process GET configuration request: #{e.inspect}"
 		end
 	end
 
 	post '/api/v1/projects/:project_id/configurations/?' do
-		begin
-			new_data = JSON.parse(request.body.read)
-			project = Project[params[:project_id]]
-			saved_config = CreateConfigurationForProject.call(
-				project: project,
-				filename: new_data['filename'],
-				description: new_data['description'],
-				document: new_data['document'])
-		rescue => e
-			logger.info "FAILED to create new config: #{e.inspect}"
-			halt 400
-		end
+	  content_type 'application/json'
+	  project = authorized_affiliated_project(env, params[:project_id])
 
-		status 201
-		new_location = URI.join(@request_url.to_s + '/' + saved_config.id.to_s).to_s
-		headers('Location' => new_location)
+	  begin
+	    config_data = JSON.parse(request.body.read)
+	    project = Project[params[:project_id]]
+	    saved_config = CreateConfigurationForProject.call(
+	      project: project,
+	      filename: config_data['filename'],
+	      description: config_data['description'],
+	      document: config_data['document'])
+	  rescue => e
+	    logger.error "FAILED to create new config: #{e.inspect}"
+	    halt(401, 'Not authorized, or problem with configuration')
+	  end
+
+	  status 201
+	  saved_config.to_json
 	end
 end

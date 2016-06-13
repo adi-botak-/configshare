@@ -13,7 +13,7 @@ Sequel.migration do
 			DateTime :created_at
 			DateTime :updated_at
 
-			unique [:project_id, :filename]
+			unique [:project_id, :filename, :relative_path]
 		end
 	end
 end

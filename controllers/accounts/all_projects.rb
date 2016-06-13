@@ -7,7 +7,7 @@ class ShareConfigurationsAPI < Sinatra::Base
 			id = params[:id]
 			halt 401 unless authorized_account?(env, id)
 			all_projects = FindAllAccountProjects.call(id: id)
-			JSON.pretty_generate(data: all_projects)
+			JSON.pretty_generate(type: 'projects', data: all_projects)
 		rescue => e 
 			logger.info "FAILED to find projects for user: #{e}"
 			halt 404

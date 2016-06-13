@@ -5,7 +5,7 @@ require 'sequel'
 # Holds a full configuration file's information
 class Configuration < Sequel::Model
 	plugin :uuid, field: :id 
-	many_to_one :projects
+	many_to_one :project
 	set_allowed_columns :filename, :relative_path
 	plugin :timestamps, update_on_create: true
 
@@ -25,14 +25,28 @@ class Configuration < Sequel::Model
 		SecureDB.decrypt(description_encrypted)
 	end
 
+	def to_full_json(options = {})
+	  JSON({
+	  	type: 'configuration',
+	  	id: id,
+	  	attributes: {
+	  		filename: filename,
+	  		relative_path: relative_path,
+	  		description: description,
+	  		document: (document ? Base64.strict_encode64(document) : nil)
+	  	},
+	  	relationships: { project: project }
+	  	},
+	  	options)
+	end
+
 	def to_json(options = {})
-		doc = document ? Base64.strict_encode64(document) : nil
 		JSON({ type: 'configuration',
 			         id: id,
-			         data: {
-			         	  name: filename,
-			         	  description: description,
-			         	  document_base64: doc
+			         attributes: {
+			         	  filename: filename,
+			         	  relative_path: relative_path,
+			         	  description: description
 			         }
 			},
 			options)
