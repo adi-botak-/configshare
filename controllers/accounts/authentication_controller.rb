@@ -1,17 +1,13 @@
 class ShareConfigurationsAPI < Sinatra::Base
 	post '/api/v1/accounts/authenticate' do
-		content_type 'application/json'
+	  content_type 'application/json'
+	  begin
+	    account, auth_token = AuthenticateAccount.call(request.body.read)
+	  rescue => e
+	    halt 401, e.to_s
+	  end
 
-		credentials = JSON.parse(request.body.read)
-		account, auth_token = AuthenticateAccount.call(
-			username: credentials['username'],
-			password: credentials['password'])
-
-		if account
-			{ account: account, auth_token: auth_token }.to_json
-		else
-			halt 401, 'Account could not be authenticated'
-		end
+	  { account: account, auth_token: auth_token }.to_json
 	end
 
 	get '/api/v1/github_sso_url' do

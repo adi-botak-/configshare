@@ -1,6 +1,6 @@
 require_relative './spec_helper'
 
-describe 'Project resource calls' do
+describe 'Testing project resource routes' do
 	before do
 		Configuration.dataset.destroy
 		Project.dataset.destroy
@@ -9,12 +9,12 @@ describe 'Project resource calls' do
 
 	describe 'Get index of all projects for an account' do
 	  before do
-	    @my_account = CreateAccount.call(
+	    @my_account = create_client_account(
 	    	username: 'adi-botak-',
 	    	email: 'adi@nthu.edu.tw',
 	    	password: 'adipassword')
 
-	    @other_account = CreateAccount.call(
+	    @other_account = create_client_account(
 	    	username: 'lee123',
 	    	email: 'lee@nthu.edu.tw',
 	    	password: 'leepassword')
@@ -33,7 +33,7 @@ describe 'Project resource calls' do
 	  end
 
 	  it 'HAPPY: should find all projects for an account' do
-	    _, auth_token = AuthenticateAccount.call(
+	    auth_token = authorized_account_token(
 	    	username: 'adi-botak-',
 	    	password: 'adipassword')
 
@@ -51,12 +51,12 @@ describe 'Project resource calls' do
 
 	describe 'Finding existing projects' do
 		before do
-	    @my_account = CreateAccount.call(
+	    @my_account = create_client_account(
 	    	username: 'adi-botak-',
 	    	email: 'adi@nthu.edu.tw',
 	    	password: 'adipassword')
 
-	    @other_account = CreateAccount.call(
+	    @other_account = create_client_account(
 	    	username: 'lee123',
 	    	email: 'lee@nthu.edu.tw',
 	    	password: 'leepassword')
@@ -80,8 +80,7 @@ describe 'Project resource calls' do
 				new_project.add_configuration(filename: "config_file#{i}.rb")
 			end
 
-			get "/api/v1/projects/#{new_project.id}"
-			_, auth_token = AuthenticateAccount.call(
+			auth_token = authorized_account_token(
 				username: 'adi-botak-',
 				password: 'adipassword')
 			get "api/v1/projects/#{new_project.id}", nil, 'HTTP_AUTHORIZATION' => "Bearer #{auth_token}"
@@ -102,16 +101,16 @@ describe 'Project resource calls' do
 
 	describe 'Add a collaborator to a project' do
 		before do
-			@owner = CreateAccount.call(
+			@owner = create_client_account(
 				username: 'adi-botak-',
-				email: 'adityautamawijaya@gmail.com',
+				email: 'adi@nthu.edu.tw',
 				password: 'mypassword')
-			@collaborator = CreateAccount.call(
+			@collaborator = create_client_account(
 				username: 'lee123',
 				email: 'lee@nthu.edu.tw',
 				password: 'leepassword')
 			@project = @owner.add_owned_project(name: 'Collaborator needed')
-			_, @auth_token = AuthenticateAccount.call(
+			@auth_token = authorized_account_token(
 				username: 'adi-botak-',
 				password: 'mypassword')
 			@req_header = {
@@ -135,13 +134,13 @@ describe 'Project resource calls' do
 
 	describe 'Creating new owned project for account owner' do
 		before do
-			@account = CreateAccount.call(
+			@account = create_client_account(
 				username: 'adi-botak-',
-				email: 'adityautamawijaya@gmail.com',
+				email: 'adi@nthu.edu.tw',
 				password: 'mypassword')
 
-			_, @auth_token = AuthenticateAccount.call(
-				username: 'adityautamawijaya',
+			@auth_token = authorized_account_token(
+				username: 'adi-botak-',
 				password: 'adipassword')
 		end
 
@@ -170,7 +169,7 @@ describe 'Project resource calls' do
 		end
 
 		it 'BAD: should not create projects without authorization' do
-		  req_header = { 'CONTENT_TYPE' => 'application.json' }
+		  req_header = { 'CONTENT_TYPE' => 'application/json' }
 		  req_body = { name: 'Demo Project' }.to_json
 		  post "/api/v1/accounts/#{@account.id}/projects/", req_body, req_header
 
@@ -180,7 +179,6 @@ describe 'Project resource calls' do
 
 		it 'HAPPY: should encrypt relevant data' do
 			original_url = 'http://example.org/project/proj.git'
-
 			proj = CreateProjectForOwner.call(
 				owner_id: @account.id,
 				name: 'Secret Project',

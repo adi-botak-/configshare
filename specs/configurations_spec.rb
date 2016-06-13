@@ -6,20 +6,20 @@ describe 'Testing Configuration resource routes' do
 		Configuration.dataset.destroy
 		BaseAccount.dataset.destroy
 
-		@wrong_account = CreateAccount.call(
+		@wrong_account = create_client_account(
 			username: 'eve',
 			email: 'eve@nthu.edu.tw',
 			password: 'evepassword')
-		_, @eve_token = AuthenticateAccount.call(
+		@eve_token = authorized_account_token(
 			username: 'eve',
 			password: 'evepassword')
 
-		@account = CreateAccount.call(
+		@account = create_client_account(
 			username: 'adityautamawijaya',
 			email: 'adi@nthu.edu.tw',
 			password: 'adipassword')
 
-		_, @auth_token = AuthenticateAccount.call(
+		@auth_token = authorized_account_token(
 			username: 'adityautamawijaya',
 			password: 'adipassword')
 		@project = CreateProjectForOwner.call(
@@ -107,7 +107,7 @@ describe 'Testing Configuration resource routes' do
 			proj_id = invalid_id(Project)
 			config_id = invalid_id(Configuration)
 			get "/api/v1/projects/#{proj_id}/configurations/#{config_id}", nil, @req_header
-			_(last_response.status).must_equal 404
+			_(last_response.status).must_equal 401
 		end
 
 		it 'SAD: should not find non-existent configuration for existing project' do

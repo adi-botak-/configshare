@@ -11,7 +11,7 @@ class ShareConfigurationsAPI < Sinatra::Base
 
 	def authenticated_account(env)
 		scheme, auth_token = env['HTTP_AUTHORIZATION'].split(' ')
-		account_payload = JSON.load JWE.decrypt(auth_token)
+		account_payload = JSON.load SecureClientMessage.decrypt(auth_token)
 		(scheme =~ /^Bearer$/i) ? account_payload : nil
 	end
 
